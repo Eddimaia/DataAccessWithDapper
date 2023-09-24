@@ -7,7 +7,8 @@ const string connectionString = @"Server=FDM-038\SQLEXPRESS;Database=balta;Integ
 
 using var connection = new SqlConnection(connectionString);
 UpdateCategory(connection);
-//CreateCategory(connection);
+var id = CreateCategory(connection);
+DeleteCategory(connection, id);
 ListCategories(connection);
 
 
@@ -20,7 +21,7 @@ static void ListCategories(SqlConnection connection)
     }
 }
 
-static void CreateCategory(SqlConnection connection)
+static Guid CreateCategory(SqlConnection connection)
 {
     Category category = new()
     {
@@ -55,6 +56,10 @@ static void CreateCategory(SqlConnection connection)
         category.Featured
     });
     Console.WriteLine(rows + " Linhas Inseridas");
+
+    ListCategories(connection);
+
+    return category.Id;
 }
 
 static void UpdateCategory(SqlConnection connection)
@@ -67,4 +72,12 @@ static void UpdateCategory(SqlConnection connection)
         Title = "Frontend 2023"
     });
     Console.WriteLine(rows + " Linhas Atualizadas");
+}
+
+static void DeleteCategory(SqlConnection connection, Guid id)
+{
+    var updateCategory = "DELETE [Category] WHERE [Id] = @Id";
+
+    var rows = connection.Execute(updateCategory, new { Id = id });
+    Console.WriteLine(rows + " Linhas Deletadas");
 }
