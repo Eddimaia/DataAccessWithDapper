@@ -136,5 +136,16 @@ namespace LearningDapper.Repositories
             var rows = connection.Execute(updateCategory, new { Id = id });
             Console.WriteLine(rows + " Linhas Deletadas");
         }
+
+        public static void SelectCategoryById(this SqlConnection connection)
+        {
+            var proc = "[spSelectCategoryById]";
+
+            var param = new { Id = new Guid("2A64C978-16ED-4544-9ADE-2A346DC9AAEC") };
+
+            var category = connection.QueryFirst<Category>(proc, param, commandType: System.Data.CommandType.StoredProcedure);
+
+            Console.WriteLine(category.Title);
+        }
     }
 }
