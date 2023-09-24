@@ -147,5 +147,37 @@ namespace LearningDapper.Repositories
 
             Console.WriteLine(category.Title);
         }
+
+        public static void OneToOne(this SqlConnection connection)
+        {
+            var query = @"
+                        SELECT	*
+                        FROM
+	                        [CareerItem] CI
+                        INNER JOIN
+	                        [Career] CA
+		                        ON CA.[Id] = CI.[CareerId]
+                        INNER JOIN
+	                        [Course] CO
+		                        ON CO.[Id] = CI.[CourseId]
+                        INNER JOIN
+	                        [Author] AU
+		                        ON AU.[Id] = CO.AuthorId
+                        INNER JOIN
+	                        [Category] Cat
+		                        ON Cat.[Id] = CO.[CategoryId]";
+            var careerItems = connection.Query<CareerItem, Career, Course, Author, Category, CareerItem>(
+                query,
+                (careerItem, career, course, author, category) =>
+                {
+                    careerItem.Course = course;
+                    careerItem.Career = career;
+                    course.Author = author;
+                    course.Category = category;
+                    return careerItem;
+                }, splitOn: "Id").ToList();
+
+            careerItems.ForEach(c => Console.WriteLine($"Autor: {c.Course.Author.Name} - Duração: { c.Career.DurationInMinutes} mins - Categoria: {c.Course.Category.Title}."));
+        }
     }
 }

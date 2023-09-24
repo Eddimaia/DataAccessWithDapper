@@ -1,6 +1,6 @@
 ﻿namespace LearningDapper.Models
 {
-    public class CarreerItem
+    public class CareerItem
     {
         public Career Career { get; set; }
         public Course Course { get; set; }
