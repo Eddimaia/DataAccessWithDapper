@@ -5,7 +5,8 @@ const string connectionString = @"Server=FDM-038\SQLEXPRESS;Database=balta;Integ
 
 using var connection = new SqlConnection(connectionString);
 connection.UpdateCategory();
-var id = connection.CreateCategory();
+//var id = connection.CreateCategory();
+var id = connection.CreateCategoryMany();
 connection.DeleteCategory(id);
 connection.ListCategories();
 

@@ -56,6 +56,67 @@ namespace LearningDapper.Repositories
             return category.Id;
         }
 
+        public static Guid CreateCategoryMany(this SqlConnection connection)
+        {
+            Category category = new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Amazon AWS",
+                Url = "Amazon",
+                Description = "Categoria destinada a serviços AWS",
+                Order = 8,
+                Summary = "AWS Cloud",
+                Featured = false
+            };
+
+            Category category2 = new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Blazor",
+                Url = "Microsoft",
+                Description = "Categoria destinada a Blazor Server",
+                Order = 9,
+                Summary = "Blazor",
+                Featured = true
+            };
+
+            var insertSql = @"INSERT INTO 
+                        [Category] 
+                   VALUES(
+                            @Id
+                        ,   @Title
+                        ,   @Url
+                        ,   @Summary
+                        ,   @Order
+                        ,   @Description
+                        ,   @Featured)";
+
+            var rows = connection.Execute(insertSql, new[] {
+                new{
+                category.Id,
+                category.Title,
+                category.Url,
+                category.Summary,
+                category.Order,
+                category.Description,
+                category.Featured
+            },
+                new {
+                category2.Id,
+                category2.Title,
+                category2.Url,
+                category2.Summary,
+                category2.Order,
+                category2.Description,
+                category2.Featured}
+            });
+            Console.WriteLine(rows + " Linhas Inseridas");
+
+            ListCategories(connection);
+
+            return category.Id;
+        }
+
         public static void UpdateCategory(this SqlConnection connection)
         {
             var updateCategory = "UPDATE [Category] SET [Title] = @Title WHERE [Id] = @Id";
