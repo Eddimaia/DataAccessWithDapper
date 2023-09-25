@@ -13,7 +13,8 @@ using var connection = new SqlConnection(connectionString);
 //connection.OneToOne();
 //connection.OneToMany();
 //connection.QueryMultiple();
-connection.SelectIn();
+//connection.SelectIn();
+connection.SelectLike("api");
 
 
 

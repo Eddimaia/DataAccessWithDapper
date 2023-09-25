@@ -248,5 +248,16 @@ namespace LearningDapper.Repositories
 
             result.ToList().ForEach(c => Console.WriteLine(c.Title));
         }
+        public static void SelectLike(this SqlConnection connection, string term)
+        {
+            var query = @"SELECT * FROM [Course] WHERE [Title] LIKE @Exp";
+
+            var result = connection.Query<Course>(query, new
+            {
+                Exp = $"%{term}%"
+            });
+
+            result.ToList().ForEach(c => Console.WriteLine(c.Title));
+        }
     }
 }
