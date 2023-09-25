@@ -10,7 +10,8 @@ using var connection = new SqlConnection(connectionString);
 //connection.DeleteCategory(id);
 //connection.ListCategories();
 //connection.SelectCategoryById();
-connection.OneToOne();
+//connection.OneToOne();
+connection.OneToMany();
 
 
 

@@ -155,9 +155,6 @@ namespace LearningDapper.Repositories
                         FROM
 	                        [CareerItem] CI
                         INNER JOIN
-	                        [Career] CA
-		                        ON CA.[Id] = CI.[CareerId]
-                        INNER JOIN
 	                        [Course] CO
 		                        ON CO.[Id] = CI.[CourseId]
                         INNER JOIN
@@ -166,18 +163,62 @@ namespace LearningDapper.Repositories
                         INNER JOIN
 	                        [Category] Cat
 		                        ON Cat.[Id] = CO.[CategoryId]";
-            var careerItems = connection.Query<CareerItem, Career, Course, Author, Category, CareerItem>(
+            var careerItems = connection.Query<CareerItem, Course, Author, Category, CareerItem>(
                 query,
-                (careerItem, career, course, author, category) =>
+                (careerItem, course, author, category) =>
                 {
                     careerItem.Course = course;
-                    careerItem.Career = career;
                     course.Author = author;
                     course.Category = category;
                     return careerItem;
                 }, splitOn: "Id").ToList();
 
-            careerItems.ForEach(c => Console.WriteLine($"Autor: {c.Course.Author.Name} - Duração: { c.Career.DurationInMinutes} mins - Categoria: {c.Course.Category.Title}."));
+            careerItems.ForEach(c => Console.WriteLine($"Autor: {c.Course.Author.Name} - Categoria: {c.Course.Category.Title}."));
+        }
+
+        public static void OneToMany(this SqlConnection connection)
+        {
+            var query = @"
+                        SELECT 
+		                    CA.[Id]
+	                    ,	CA.[Title]
+	                    ,	CI.[CareerId]
+	                    ,	CI.[Title]
+                    FROM 
+	                    [Career] CA
+                    INNER JOIN
+	                    [CareerItem] CI ON CI.[CareerId] = CA.[Id]
+                    ORDER BY 
+                            CA.[Title]";
+
+            List<Career> careers = new();
+
+            var items = connection.Query<Career, CareerItem, Career>(
+                query,
+                (career, item) =>
+                {
+                    var car = careers.Where(x => x.Id.Equals(career.Id)).FirstOrDefault();
+
+                    if (car is null)
+                    {
+                        car = career;
+                        car.Items.Add(item);
+                        careers.Add(car);
+                    }
+                    else
+                        car.Items.Add(item);
+
+                    return career;
+                }, splitOn: "CareerId");
+
+            careers.ToList().ForEach(career =>
+            {
+                Console.WriteLine($"Career: {career.Title}");
+                career.Items.ToList().ForEach(item =>
+                {
+                    Console.WriteLine($" - {item.Title}");
+                });
+            });
         }
     }
 }
