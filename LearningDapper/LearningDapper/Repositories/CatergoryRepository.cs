@@ -232,5 +232,21 @@ namespace LearningDapper.Repositories
             categories.ForEach(c => Console.WriteLine("Category: " + c.Title));
             categories.ForEach(c => Console.WriteLine("Course: " + c.Title));
         }
+
+        public static void SelectIn(this SqlConnection connection)
+        {
+            var query = @"SELECT * FROM [Career] WHERE [Id] IN @Id";
+
+            var result = connection.Query<Career>(query, new
+            {
+                Id = new[]
+                {
+                    "4327AC7E-963B-4893-9F31-9A3B28A4E72B",
+                    "92D7E864-BEA5-4812-80CC-C2F4E94DB1AF"
+                }
+            });
+
+            result.ToList().ForEach(c => Console.WriteLine(c.Title));
+        }
     }
 }
