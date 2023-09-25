@@ -11,7 +11,8 @@ using var connection = new SqlConnection(connectionString);
 //connection.ListCategories();
 //connection.SelectCategoryById();
 //connection.OneToOne();
-connection.OneToMany();
+//connection.OneToMany();
+connection.QueryMultiple();
 
 
 

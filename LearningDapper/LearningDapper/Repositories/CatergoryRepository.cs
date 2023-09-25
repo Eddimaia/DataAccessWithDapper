@@ -220,5 +220,17 @@ namespace LearningDapper.Repositories
                 });
             });
         }
+
+        public static void QueryMultiple(this SqlConnection connection)
+        {
+            var query = "SELECT * FROM [Category]; SELECT * FROM [Course]";
+
+            using var multi = connection.QueryMultiple(query);
+            var categories = multi.Read<Category>().ToList();
+            var course = multi.Read<Course>().ToList();
+
+            categories.ForEach(c => Console.WriteLine("Category: " + c.Title));
+            categories.ForEach(c => Console.WriteLine("Course: " + c.Title));
+        }
     }
 }
